@@ -1,0 +1,125 @@
+
+# 과제
+# https://joshuachang.tistory.com/17
+# 16번까지 풀고 문제와 답이 이상해서 프로그래머스 풀기로 함
+# 나는 mysql, Ansi 문법으로 풀이 
+
+
+
+select * from employees;
+
+#4
+select last_name,hire_date 
+from employees 
+where hire_date between '1998/02/20' and '1998/05/01'
+order by hire_date desc;
+
+#9
+select last_name,salary,commission_pct
+from employees 
+where commission_pct is not null
+order by salary desc;
+
+#10
+select last_name from employees
+where last_name like '___a%';
+
+#11
+select last_name 
+from employees
+where last_name like '%e%' or last_name like '%a%';
+
+#12
+select last_name, salary, job_id
+from employees
+where job_id in ('sa_rep','st_clerk')
+and salary not in (2500,3500,7000);
+
+#13-1
+select last_name , job_id,
+				( case job_id
+                when 'AD_PRES'then 'A'
+                when 'ST_MAN'then 'b'
+                when 'IT_PROG'then 'c'
+                when 'SA_REP'then 'd'
+                when 'ST_CLERK'then 'e'
+                else '0'
+				end ) as job_grade
+from employees;
+
+#13-2
+select last_name , job_id, job_grade
+from(
+	select last_name, job_id, salary, 
+				( case job_id
+                when 'AD_PRES'then 'A'
+                when 'ST_MAN'then 'b'
+                when 'IT_PROG'then 'c'
+                when 'SA_REP'then 'd'
+                when 'ST_CLERK'then 'e'
+                else '0'
+				end ) job_grade
+	from employees
+)job_grade;
+
+#13-3
+select last_name, job_id, 
+				case job_id 
+				when 'AD_PRES'then 'A'
+                when 'ST_MAN'then 'b'
+                when 'IT_PROG'then 'c'
+                when 'SA_REP'then 'd'
+                when 'ST_CLERK'then 'e'
+                else 'other' 
+                end job_grade
+from employees;
+
+#13-4
+-- case를 주지 않은 나머지는 null이 된다.
+select last_name, job_id, case when job_id='AD_VP' then '******' end grade
+from employees;
+
+#13-5
+SET @rownum:=0; -- set으로 초기화 / 안해주면 rownum이 계속 추가됨 
+SELECT  @rownum:=@rownum+1 as rownum
+        , EMPLOYEE_ID
+        , FIRST_NAME
+        , LAST_NAME
+        , CASE (SELECT 98 FROM DUAL)
+            WHEN 100 THEN
+                (SELECT now() - 1 FROM DUAL)
+            ELSE (SELECT now() - 1 FROM DUAL)
+        END GRADE
+        , CASE (SELECT 98 FROM DUAL)
+            WHEN 100 THEN
+                now() - 2
+            ELSE now() - 2
+        END GRADE
+        , now()
+FROM    EMPLOYEES;
+
+#14
+select last_name, d.department_id, department_name
+from employees e, departments d
+where e.department_id = d.department_id;
+
+#15
+select distinct job_id, d.department_id
+from employees e, departments d
+where d.department_id in (30,90)
+and e.department_id = d.department_id;
+
+#16 커미션은 Oxford 만 받는다 .  mysql은 pk로 조회가 어려운듯 하다. 
+select last_name, commission_pct, department_name, city, l.location_id
+from employees e, departments d, locations l
+where e.department_id=d.department_id
+and d.location_id=l.location_id
+and l.location_id = (
+	select city
+    from locations 
+    where city = 'Oxford'
+);
+ 
+
+ 
+  
